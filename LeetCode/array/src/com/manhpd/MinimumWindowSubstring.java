@@ -25,27 +25,9 @@ public class MinimumWindowSubstring {
 
     public static String minWindow(String s, String t) {
         int windowStart = 0;
-        int minLength = 0;
-        String minWindow = "";
-        Map<Character, Integer> countMap = new HashMap<>();
-        Map<Character, Integer> indexMap = new HashMap<>();
-
-        int minIndex = 0;
-        int maxIndex = 0;
-        int lengthOtherString = t.length();
-
-//        for (int i = 0; i < t.length(); ++i) {
-//            char currentCharacter = t.charAt(i);
-//            countMap.put(currentCharacter, countMap.getOrDefault(currentCharacter, 0) + 1);
-//        }
 
         for (int windowEnd = 0; windowEnd < s.length(); ++windowEnd) {
             char rightCharacter = s.charAt(windowEnd);
-            if (countMap.containsKey(rightCharacter)) {
-                minIndex = Math.min(minIndex, countMap.get(rightCharacter));
-                maxIndex = Math.min(maxIndex, countMap.get(rightCharacter));
-            }
-
 
         }
 
