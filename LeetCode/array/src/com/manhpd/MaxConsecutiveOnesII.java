@@ -17,10 +17,11 @@ import java.util.List;
 public class MaxConsecutiveOnesII {
 
     public static void main(String[] args) {
-//        int[] nums = {1, 0, 1, 1, 0};
-        int[] nums = {1, 0, 1, 1, 0, 1, 1, 1};
+        int[] nums = {1, 0, 1, 1, 0};
+//        int[] nums = {1, 0, 1, 1, 0, 1, 1, 1};
 //        int result = findMaxConsecutiveOnes(nums);
-        int result = findMaxConsecutiveOnesDP(nums);
+//        int result = findMaxConsecutiveOnesDP(nums);
+        int result = findMaxConsecutiveOnesNormal1(nums);
 
         System.out.println("Result: " + result);
     }
@@ -96,6 +97,40 @@ public class MaxConsecutiveOnesII {
         }
 
         return result;
+    }
+
+    /**
+     * Use brute force way
+     *
+     * Time complexity: O(n^2)
+     *
+     * @param nums
+     * @return
+     */
+    public static int findMaxConsecutiveOnesNormal1(int[] nums) {
+        int max = Integer.MIN_VALUE;
+
+        for (int i = 0; i < nums.length; ++i) {
+            int length = 0;
+            int k = 1;  // the number of 0s
+            for (int j = i; j < nums.length; ++j) {
+                if (nums[j] == 1) {
+                    ++length;
+                } else {
+                    --k;
+                    if (k == 0) {
+                        ++length;
+                    } else {
+                        break;
+                    }
+                }
+            }
+
+            max = Math.max(max, length);
+        }
+
+        System.out.println(max);
+        return max;
     }
 
     /**
