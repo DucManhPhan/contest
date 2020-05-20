@@ -13,9 +13,10 @@ package com.manhpd;
 public class MaximumSubarray {
 
     public static void main(String[] args) {
-//        int[] nums = {-2, 1, -3, 4, -1, 2, 1, -5, 4};
-        int[] nums = {-1};
-        int res = maxSubArray(nums);
+        int[] nums = {-2, 1, -3, 4, -1, 2, 1, -5, 4};
+//        int[] nums = {-1};
+//        int res = maxSubArray(nums);
+        int res = kadaneAlgorithm(nums);
 
         System.out.println(res);
     }
@@ -33,6 +34,20 @@ public class MaximumSubarray {
 
                 max = Math.max(max, sum);
             }
+        }
+
+        return max;
+    }
+
+    public static int kadaneAlgorithm(int[] nums) {
+        int len = nums.length;
+        int max = Integer.MIN_VALUE;
+        int sum = 0;
+
+        for (int i = 0; i < len; ++i) {
+            sum += nums[i];
+            max = Math.max(max, sum);
+            sum = Math.max(sum, 0);
         }
 
         return max;
