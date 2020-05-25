@@ -4,10 +4,10 @@ public class CircularArray {
 
     public static void main(String[] args) {
         int[] nums = {0, 1, 2, 3, 4, 5, 6};
-        int index = 2;
+        int index = 0;
 
-//        printElementsTill(nums, index);
-        printElementsTillNormal(nums, index);
+        printElementsTill(nums, index);
+//        printElementsTillNormal(nums, index);
     }
 
     private static void printElementsTillNormal(int[] nums, int index) {

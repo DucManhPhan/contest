@@ -13,8 +13,8 @@ public class LongestSubStringWithoutRepeated {
 //        String s = "bbbbb";
 //        String s = "pwwkew";
 //        String s = "abccde";
-        String s = "abbbb";
 //        String s = "dvdf";
+        String s = "abbbb";
         int length = lengthOfLongestSubstring(s);
 
         System.out.println("Max length of the longest substring is: " + length);
