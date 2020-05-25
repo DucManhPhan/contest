@@ -21,6 +21,15 @@ public class MaximumSubarray {
         System.out.println(res);
     }
 
+    /**
+     * Using brute force algorithm
+     *
+     * Time complexity: O(n^3)
+     * Space complexity: O(1)
+     *
+     * @param nums
+     * @return
+     */
     public static int maxSubArray(int[] nums) {
         int len = nums.length;
         int max = Integer.MIN_VALUE;
@@ -39,6 +48,15 @@ public class MaximumSubarray {
         return max;
     }
 
+    /**
+     * Using Kadane algorithm
+     *
+     * Time complexity: O(n)
+     * Space complexity: O(1)
+     *
+     * @param nums
+     * @return
+     */
     public static int kadaneAlgorithm(int[] nums) {
         int len = nums.length;
         int max = Integer.MIN_VALUE;
