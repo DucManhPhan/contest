@@ -20,23 +20,17 @@ import java.util.function.Supplier;
 public class RearrangeString {
 
     public static void main(String[] args) {
-        AtomicInteger num = new AtomicInteger(10);
-        num.incrementAndGet();
-        num.getAndDecrement();
-        num.compareAndSet(10, 11);
-        System.out.println(num.get());
-
 //        String s = "aab";
 //        String s = "aaadbcf";
 //        String s = "abbbccf";
 //        String s = "aaab";
         String s = "aaabbccdd";
-//        String res = rearrange(s);
-//        if (res == "") {
-//            System.out.println("Empty string");
-//        }
-//
-//        System.out.println(res);
+        String res = rearrange(s);
+        if (res == "") {
+            System.out.println("Empty string");
+        }
+
+        System.out.println(res);
     }
 
     public static String rearrange(String s) {
