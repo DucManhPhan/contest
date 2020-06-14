@@ -1,11 +1,13 @@
 package com.manhpd;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 public class LevelOrderTraversal {
 
-    private static int maxHeight = Integer.MIN_VALUE;
+    private static int maxLevel = Integer.MIN_VALUE;
 
     public static void main(String[] args) {
         TreeNode first = new TreeNode(1);
@@ -38,10 +40,17 @@ public class LevelOrderTraversal {
 //        inorderTraversal(first, res);
 
         // iterative version
-        List<Integer> res = levelOrderTraversal(first);
+        List<Integer> res = levelOrderTraversalRecursiveVersion(first);
 
-//        res.stream().map(item -> item + " --> ").forEach(item -> System.out.print(item));
-//        System.out.println("null");
+        res.stream().map(item -> item + " --> ").forEach(item -> System.out.print(item));
+        System.out.println("null");
+    }
+
+    public static List<Integer> levelOrderTraversalIterativeVersion(TreeNode root) {
+        List<Integer> nodes = new ArrayList<>();
+        Queue<TreeNode> queue = new LinkedList<>();
+
+        return nodes;
     }
 
     /**
@@ -49,13 +58,30 @@ public class LevelOrderTraversal {
      *
      * @param root
      */
-    public static List<Integer> levelOrderTraversal(TreeNode root) {
+    public static List<Integer> levelOrderTraversalRecursiveVersion(TreeNode root) {
+        List<Integer> nodes = new ArrayList<>();
+
 //        int height = getMaxLevelBottomUp(root);
         getMaxLevelTopDown(root, 1);
-        int height = maxHeight;
-        System.out.println(height);
 
-        return Collections.emptyList();
+        for (int level = 1; level <= maxLevel; ++level) {
+            getNodesInSameLevel(root, level, 1, nodes);
+        }
+
+        return nodes;
+    }
+
+    public static void getNodesInSameLevel(TreeNode root, int currentLevel, int level, List<Integer> nodes) {
+        if (root == null) {
+            return;
+        }
+
+        if (level == currentLevel) {
+            nodes.add(root.val);
+        }
+
+        getNodesInSameLevel(root.left, currentLevel, level + 1, nodes);
+        getNodesInSameLevel(root.right, currentLevel, level + 1, nodes);
     }
 
     private static void getMaxLevelTopDown(TreeNode root, int level) {
@@ -64,7 +90,7 @@ public class LevelOrderTraversal {
         }
 
         if (root.left == null && root.right == null) {
-            maxHeight = Math.max(maxHeight, level);
+            maxLevel = Math.max(maxLevel, level);
         }
 
         getMaxLevelTopDown(root.left, level + 1);
