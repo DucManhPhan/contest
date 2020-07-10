@@ -1,13 +1,14 @@
 package com.manhpd;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class LevelOrderTraversal {
 
     private static int maxLevel = Integer.MIN_VALUE;
+
+    private static Map<Integer, List<Integer>> nodesPerLevel = new HashMap<>();
 
     public static void main(String[] args) {
         TreeNode first = new TreeNode(1);
@@ -41,6 +42,7 @@ public class LevelOrderTraversal {
 
         // iterative version
         List<Integer> res = levelOrderTraversalRecursiveVersion(first);
+//        List<Integer> res = levelOrderTraversalRecursiveVersion1(first);
 
         res.stream().map(item -> item + " --> ").forEach(item -> System.out.print(item));
         System.out.println("null");
@@ -106,6 +108,33 @@ public class LevelOrderTraversal {
         int rightHeight = getMaxLevelBottomUp(root.right);
 
         return Math.max(leftHeight, rightHeight) + 1;
+    }
+
+    public static List<Integer> levelOrderTraversalRecursiveVersion1(TreeNode root) {
+        recursiveVersion(root, 0);
+
+        // convert hash map to list
+        if (nodesPerLevel.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return nodesPerLevel.values().stream().flatMap(valNodes -> Stream.of(valNodes.toArray())).map(value -> (Integer) value).collect(Collectors.toList());
+    }
+
+    public static void recursiveVersion(TreeNode root, int level) {
+        if (root == null) {
+            return;
+        }
+
+        if (nodesPerLevel.size() == level) {
+            nodesPerLevel.put(level, new ArrayList<>());
+        }
+
+        // add the value of current node with the same level
+        nodesPerLevel.get(level).add(root.val);
+
+        recursiveVersion(root.left, level + 1);
+        recursiveVersion(root.right, level + 1);
     }
 
 }
