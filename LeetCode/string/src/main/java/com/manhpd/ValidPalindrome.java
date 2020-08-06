@@ -17,7 +17,8 @@ public class ValidPalindrome {
 //        String s = "A man, a plan, a canal: Panama";
 //        String s = "race a car";
         String s = "Marge, let's \"went.\" I await news telegram.";
-        boolean res = isPalindrome(s);
+        boolean res = isPalindrome0(s);
+//        boolean res = isPalindrome(s);
 
         System.out.println(res);
     }
@@ -47,6 +48,33 @@ public class ValidPalindrome {
         }
 
         return true;
+    }
+
+    public static boolean isPalindrome0(String s) {
+        int left = 0;
+        int right = s.length() - 1;
+
+        return isPalindrome0(s, left, right);
+    }
+
+    public static boolean isPalindrome0(String s, int left, int right) {
+        if (left >= right) {
+            return true;
+        }
+
+        while (!Character.isLetterOrDigit(s.charAt(left))) {
+            ++left;
+        }
+
+        while (!Character.isLetterOrDigit(s.charAt(right))) {
+            --right;
+        }
+
+        if (Character.toLowerCase(s.charAt(left)) != Character.toLowerCase(s.charAt(right))) {
+            return false;
+        }
+
+        return isPalindrome0(s, ++left, --right);
     }
 
 }
