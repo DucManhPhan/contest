@@ -30,6 +30,7 @@ public class ClosetBinarySearchTreeValue {
     }
 
     public static int closetValue(TreeNode root, double target) {
+        TreeNode tmp = root;
         return -1;
     }
 
