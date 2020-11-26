@@ -23,6 +23,8 @@ import com.manhpd.tree.TreeNode;
  */
 public class ClosetBinarySearchTreeValue {
 
+    private static int minDistance = Integer.MAX_VALUE;
+
     public static void main(String[] args) {
         TreeNode root = TreeFactory.init();
         double target = 3.714286;
@@ -32,6 +34,13 @@ public class ClosetBinarySearchTreeValue {
     public static int closetValue(TreeNode root, double target) {
         TreeNode tmp = root;
         return -1;
+    }
+
+    public static int visitNode(TreeNode node, double target) {
+        int minTmp = (int) (target - node.val);
+        minDistance = minDistance < minTmp ? minDistance : minTmp;
+
+        return 0;
     }
 
 }
