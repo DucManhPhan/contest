@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/two-pointers.iml" filepath="$PROJECT_DIR$/.idea/two-pointers.iml" />
+      <module fileurl="file://$PROJECT_DIR$/two-pointers.iml" filepath="$PROJECT_DIR$/two-pointers.iml" />
     </modules>
   </component>
 </project>

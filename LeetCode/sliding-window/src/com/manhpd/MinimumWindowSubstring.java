@@ -6,8 +6,8 @@ import java.util.Map;
 public class MinimumWindowSubstring {
 
     public static void main(String[] args) {
-        String s = "AADOBECODEBANC";
-        String t = "ABC";
+//        String s = "AADOBECODEBANC";
+//        String t = "ABC";
 
 //        String s = "ab";
 //        String t = "b";
@@ -17,6 +17,9 @@ public class MinimumWindowSubstring {
 
 //        String s = "acbbaca";
 //        String t = "aba";
+
+        String s = "aaaaaaaaaaaabbbbbcdd";
+        String t = "abcdd";
 
         MinimumWindowSubstring solution = new MinimumWindowSubstring();
         System.out.println(solution.minWindow(s, t));
@@ -44,7 +47,7 @@ public class MinimumWindowSubstring {
                 --tSize;
                 countCharacters.put(c, countCharacters.get(c) - 1);
 
-                while (countCharacters.get(c) < 0 && countCharacters.containsKey(s.charAt(windowStart))) {
+                while (countCharacters.get(c) < 0) {
                     char startChar = s.charAt(windowStart);
                     if (windowStart < s.length() && countCharacters.containsKey(startChar)) {
                         ++tSize;
@@ -52,6 +55,10 @@ public class MinimumWindowSubstring {
                     }
 
                     ++windowStart;
+
+                    while (windowStart < s.length() && !countCharacters.containsKey(s.charAt(windowStart))) {
+                        ++windowStart;
+                    }
                 }
 
                 if (tSize == 0 && this.hasAcceptSubstring(countCharacters, t)) {
@@ -59,17 +66,6 @@ public class MinimumWindowSubstring {
                         minSize = windowEnd - windowStart + 1;
                         res = s.substring(windowStart, windowEnd + 1);
                     }
-
-//                    ++tSize;
-
-//                    if (windowStart < s.length()) {
-//                        countCharacters.put(s.charAt(windowStart), countCharacters.get(s.charAt(windowStart)) + 1);
-//                        ++windowStart;
-//
-//                        while (windowStart < s.length() && !countCharacters.containsKey(s.charAt(windowStart))) {
-//                            ++windowStart;
-//                        }
-//                    }
                 }
             }
         }
