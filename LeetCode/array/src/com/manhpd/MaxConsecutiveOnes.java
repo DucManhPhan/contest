@@ -1,5 +1,9 @@
 package com.manhpd;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Given a binary array, find the maximum number of consecutive 1s in this array.
  * The input array will only contain 0 and 1.
@@ -15,14 +19,15 @@ public class MaxConsecutiveOnes {
     public static void main(String[] args) {
 //        int[] nums = {1, 1, 0, 1, 1, 1};
 //        int[] nums = {1, 1, 0, 1};
-//        int[] nums = {0, 1, 1, 0, 1, 1, 1, 0, 1};
-        int[] nums = {0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1};
+        int[] nums = {0, 1, 1, 0, 1, 1, 1, 0, 1};
+//        int[] nums = {0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1};
 //        int[] nums = {0, 0, 0};
-//        int result = findMaxConsecutiveOnesSlidingWindow(nums);
-//        int result = findMaxConsecutiveOnesNormal(nums);
-        int result = findMaxConsecutiveOnesSlidingWindowI(nums);
+//        int result1 = findMaxConsecutiveOnesSlidingWindow(nums);
+        int result1 = findMaxConsecutiveOnesNormal(nums);
+//        int result1 = findMaxConsecutiveOnesSlidingWindowI(nums);
+        int result = findMaxConsecutiveOnes(nums);
 
-        System.out.println("Result: " + result);
+        System.out.println("Result: " + result + " - Result 1: " + result1);
     }
 
     /**
@@ -101,6 +106,25 @@ public class MaxConsecutiveOnes {
         }
 
         return maxLength;
+    }
+
+    private static int findMaxConsecutiveOnes(int[] nums) {
+        List<Integer> temps = new ArrayList<>();
+        int count = 0;
+        for (int i = 0; i < nums.length; ++i) {
+            if (nums[i] == 1) {
+                ++count;
+            } else if (nums[i] == 0) {
+                temps.add(count);
+                count = 0;
+            }
+        }
+
+        if (nums[nums.length - 1] != 0) {
+            temps.add(count);
+        }
+
+        return Collections.max(temps);
     }
 
 }
