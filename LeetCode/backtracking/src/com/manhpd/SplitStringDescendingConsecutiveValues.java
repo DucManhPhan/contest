@@ -51,20 +51,32 @@ public class SplitStringDescendingConsecutiveValues {
     }
 
     private static boolean splitString(String s) {
-        int length = s.length();
         List<String> strs = new ArrayList<>();
+        return splitString(s, strs, 0, "");
+    }
 
-        for (int i = 1; i < length; ++i) {
-            boolean isResult = splitString(s, strs, 0, i);
+    private static boolean splitString(String s, List<String> tmp, int currentIdx, String currentStr) {
+        if (currentStr != null && !"".equals(currentStr)) {
+            if (tmp.size() == 0) {
+                tmp.add(currentStr);
+            } else {
+                int lastNum = Integer.valueOf(tmp.get(tmp.size() - 1));
+                int currentNum = Integer.valueOf(currentStr);
+
+                if (lastNum < currentNum) {
+                    return false;
+                }
+            }
+        }
+
+        int currentLength = "".equals(currentStr) ? 1 : currentStr.length();
+        for (int i = currentLength; i < s.length(); ++i) {
+            String numStr = s.substring(currentIdx, currentIdx + i);
+            boolean isResult = splitString(s, tmp, currentIdx + i, numStr);
             if (isResult) {
                 return true;
             }
         }
-
-        return false;
-    }
-
-    private static boolean splitString(String s, List<String> tmp, int currentIdx, int currentLength) {
 
         return false;
     }
