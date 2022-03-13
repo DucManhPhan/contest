@@ -3,8 +3,11 @@ package com.manhpd;
 
 import java.io.*;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
+ * Refer: http://www.java2s.com/Code/Java/File-Input-Output/AnIteratoroverthelinesinaReader.htm
+ *
  * Given a sample file with each line will contain an integer.
  * Using Iterator to display each integer.
  *
@@ -19,11 +22,11 @@ import java.util.Iterator;
  */
 public class ExtractionInteger implements Iterable<Integer> {
 
-    private static final int INT_UNDER_RANGE = -1000000000;
+    private static final int INT_LOWER_RANGE = -1000000000;
 
     private static final int INT_UPPER_RANGE = 1000000000;
 
-    private static final String regex = "[+-]?[0-9]{1,10}";
+    private static final String regex = "[-+]?[0-9]{1,10}$";
 
     private BufferedReader bufferedReader;
 
@@ -44,40 +47,68 @@ public class ExtractionInteger implements Iterable<Integer> {
     public Iterator<Integer> iterator() {
         return new Iterator<Integer>() {
 
+            private String currentLine;
+
+            private boolean isFinished = false;
+
             @Override
             public boolean hasNext() {
-                try {
-                    if (bufferedReader.ready()) {
-                        return true;
-                    } else {
-                        bufferedReader.close();
-                        return false;
+                if (this.currentLine != null) {
+                    return true;
+                } else if (this.isFinished) {
+                    return false;
+                } else {
+                    try {
+                        while (true) {
+                            String line = bufferedReader.readLine();
+                            if (line == null) {
+                                this.isFinished = true;
+                                return false;
+                            } else if (this.isValidLine(line)) {
+                                this.currentLine = line.trim();
+                                return true;
+                            }
+                        }
+                    } catch (IOException ex) {
+                        this.close();
+                        throw new IllegalStateException(ex.toString());
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public Integer next() {
+                return this.nextLine();
+            }
+
+            public void close() {
+                this.isFinished = true;
+                this.currentLine = null;
+            }
+
+            protected boolean isValidLine(String line) {
+                String trimedLine = line.trim();
+                if (trimedLine.matches(regex)) {
+                    int value = Integer.valueOf(trimedLine);
+                    if (value >= INT_LOWER_RANGE && value <= INT_UPPER_RANGE) {
+                        return true;
+                    }
                 }
 
                 return false;
             }
 
-            @Override
-            public Integer next() {
-                String currentLine = "";
-                try {
-                    while ((currentLine = bufferedReader.readLine()) != null) {
-                        if (currentLine.matches(regex)) {
-                            int value = Integer.valueOf(currentLine);
-                            if (value >= INT_UNDER_RANGE && value <= INT_UPPER_RANGE) {
-                                return value;
-                            }
-                        }
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
+            public Integer nextLine() {
+                if (!this.hasNext()) {
+                    throw new NoSuchElementException("No more lines");
                 }
 
-                return null;
+                String currentLine = this.currentLine;
+                this.currentLine = null;
+
+                return Integer.valueOf(currentLine);
             }
+
         };
     }
 
