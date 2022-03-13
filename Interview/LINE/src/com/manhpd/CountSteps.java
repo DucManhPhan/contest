@@ -16,7 +16,7 @@ package com.manhpd;
  * Output: 7
  *
  */
-public class LineInterviewApplication {
+public class CountSteps {
 
     public static void main(String[] args) {
 
