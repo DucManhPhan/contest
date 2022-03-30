@@ -1,7 +1,6 @@
 package com.manhpd;
 
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.*;
 
 /**
  * Ref: https://leetcode.com/problems/number-of-recent-calls/
@@ -34,10 +33,14 @@ import java.util.LinkedList;
  * Constraints:
  * 1 <= t <= 109
  * Each test case will call ping with strictly increasing values of t.
- * At most 104 calls will be made to ping.
+ * At most 10^4 calls will be made to ping.
  */
 public class NumberOfRecentCalls {
 
+    /**
+     * Using queue to contain requests
+     *
+     */
     public static class RecentCounter {
 
         private final LinkedList<Integer> timeFrames;
@@ -79,8 +82,38 @@ public class NumberOfRecentCalls {
         }
     }
 
+    /**
+     * Using binary search
+     */
+    public static class RecentCounterV2 {
+
+        private List<Integer> timeFrames;
+
+        public RecentCounterV2() {
+            this.timeFrames = new ArrayList<>();
+        }
+
+        public int ping(int t) {
+            this.timeFrames.add(t);
+
+            int oldestTime = t - 3000;
+            if (oldestTime < 0) {
+                return this.timeFrames.size();
+            }
+
+            int currentIdx = Collections.binarySearch(this.timeFrames, oldestTime);
+            if (currentIdx < 0) {
+                currentIdx = -currentIdx - 1;
+            }
+
+            return this.timeFrames.size() - currentIdx;
+        }
+
+    }
+
     public static void main(String[] args) {
-        RecentCounter recentCounter = new RecentCounter();
+//        RecentCounter recentCounter = new RecentCounter();
+        RecentCounterV2 recentCounter = new RecentCounterV2();
         int num = recentCounter.ping(1);     // requests = [1], range is [-2999,1], return 1
         System.out.println("Num: " + num);
 
