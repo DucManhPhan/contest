@@ -39,7 +39,6 @@ public class NumberOfRecentCalls {
 
     /**
      * Using queue to contain requests
-     *
      */
     public static class RecentCounter {
 
@@ -109,6 +108,87 @@ public class NumberOfRecentCalls {
             return this.timeFrames.size() - currentIdx;
         }
 
+    }
+
+    /**
+     * Using Priority Queue
+     */
+    public static class RecentCounterV3 {
+
+        PriorityQueue<Integer> queue;
+
+        public RecentCounterV3() {
+            this.queue = new PriorityQueue<>();
+        }
+
+        public int ping(int t) {
+            while (!this.queue.isEmpty() && this.queue.peek() < t - 3000) {
+                this.queue.poll();
+            }
+
+            this.queue.add(t);
+            return this.queue.size();
+        }
+    }
+
+    /**
+     * Using TreeMap
+     */
+    public static class RecentCounterV4 {
+
+        private TreeMap<Integer, Integer> treeMap;
+
+        public RecentCounterV4() {
+            this.treeMap = new TreeMap<>();
+        }
+
+        public int ping(int t) {
+            this.treeMap.put(t, this.treeMap.size() + 1);
+            return this.treeMap.tailMap(t - 3000).size();
+        }
+
+    }
+
+    /**
+     * Using TreeSet
+     */
+    public static class RecentCounterV5 {
+
+        private TreeSet<Integer> treeSet;
+
+        public RecentCounterV5() {
+            this.treeSet = new TreeSet<>();
+        }
+
+        public int ping(int t) {
+            this.treeSet.add(t);
+            return this.treeSet.tailSet(t - 3000).size();
+        }
+    }
+
+    /**
+     * Using circular array
+     */
+    public static class RecentCounterV6 {
+
+        private int[] times;
+
+        public RecentCounterV6() {
+            this.times = new int[3001];
+        }
+
+        public int ping(int t) {
+            this.times[t % 3001] = t;
+
+            int res = 0;
+            for (int i = 0; i < 3001; ++i) {
+                if (this.times[i] != 0 && this.times[i] >= t - 3000) {
+                    ++res;
+                }
+            }
+
+            return res;
+        }
     }
 
     public static void main(String[] args) {
