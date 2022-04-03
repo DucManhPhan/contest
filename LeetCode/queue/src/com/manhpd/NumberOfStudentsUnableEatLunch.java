@@ -55,11 +55,18 @@ public class NumberOfStudentsUnableEatLunch {
         int[] sandwiches = {0, 1, 0, 1};
 
         NumberOfStudentsUnableEatLunch numberOfStudentsUnableEatLunch = new NumberOfStudentsUnableEatLunch();
-        int res = numberOfStudentsUnableEatLunch.countStudents(students, sandwiches);
+        int res = numberOfStudentsUnableEatLunch.countStudentsV2(students, sandwiches);
 
         System.out.println("Result: " + res);
     }
 
+    /**
+     * Using Queue data structure for this problem
+     *
+     * @param students
+     * @param sandwiches
+     * @return
+     */
     public int countStudents(int[] students, int[] sandwiches) {
         Queue<Integer> qStudents = new LinkedList<>();
 
@@ -83,6 +90,44 @@ public class NumberOfStudentsUnableEatLunch {
         }
 
         return numStudentsUnableEat;
+    }
+
+    /**
+     * Optimized the above solution
+     *
+     * @param students
+     * @param sandwiches
+     * @return
+     */
+    public int countStudentsV2(int[] students, int[] sandwiches) {
+        int circularSandwiches = 0;
+        int squareSandwiches = 0;
+
+        for (int i = 0; i < students.length; ++i) {
+            if (students[i] == 0) {
+                ++circularSandwiches;
+            } else {
+                ++squareSandwiches;
+            }
+        }
+
+        for (int i = 0; i < sandwiches.length; ++i) {
+            if (sandwiches[i] == 0) {
+                if (circularSandwiches == 0) {
+                    return squareSandwiches;
+                }
+
+                --circularSandwiches;
+            } else {
+                if (squareSandwiches == 0) {
+                    return circularSandwiches;
+                }
+
+                --squareSandwiches;
+            }
+        }
+
+        return circularSandwiches + squareSandwiches;
     }
 
 }
