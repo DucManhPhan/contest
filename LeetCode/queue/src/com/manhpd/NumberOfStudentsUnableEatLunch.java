@@ -1,5 +1,8 @@
 package com.manhpd;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 /**
  * Ref: https://leetcode.com/problems/number-of-students-unable-to-eat-lunch/
  *
@@ -44,41 +47,42 @@ package com.manhpd;
  */
 public class NumberOfStudentsUnableEatLunch {
 
+    public static void main(String[] args) {
+//        int[] students = {1, 1, 1, 0, 0, 1};
+//        int[] sandwiches = {1, 0, 0, 0, 1, 1};
+
+        int[] students = {1, 1, 0, 0};
+        int[] sandwiches = {0, 1, 0, 1};
+
+        NumberOfStudentsUnableEatLunch numberOfStudentsUnableEatLunch = new NumberOfStudentsUnableEatLunch();
+        int res = numberOfStudentsUnableEatLunch.countStudents(students, sandwiches);
+
+        System.out.println("Result: " + res);
+    }
+
     public int countStudents(int[] students, int[] sandwiches) {
-        int topSandwich = 0;
+        Queue<Integer> qStudents = new LinkedList<>();
 
-        int head = 0;
-        int tail = students.length - 1;
+        for (int value : students) {
+            qStudents.add(value);
+        }
 
-        while (true) {
-            if (students[head] == sandwiches[topSandwich]) {
-                ++head;
-                ++topSandwich;
+        int topPositionOfSandwich = 0;
+        int numStudentsUnableEat = 0;
+        while (!qStudents.isEmpty() && numStudentsUnableEat < qStudents.size()) {
+            if (sandwiches[topPositionOfSandwich] == qStudents.peek()) {
+                numStudentsUnableEat = 0;
 
-                shift(students, head, tail);
-                head = 0;
-                tail--;
+                ++topPositionOfSandwich;
+                qStudents.poll();
             } else {
-                int turnAroundValue = students[head];
-                shift(students, head, tail);
-                head = 0;
-//                tail++;
+                ++numStudentsUnableEat;
 
-                students[tail] = turnAroundValue;
+                qStudents.add(qStudents.poll());
             }
         }
 
-        return -1;
-    }
-
-    private void shift(int[] students, int head, int tail) {
-        if (head == 0) {
-            return;
-        }
-
-        for (int i = head; i < tail; ++i) {
-            students[i - 1] = students[i];
-        }
+        return numStudentsUnableEat;
     }
 
 }
