@@ -60,6 +60,7 @@ public class NthDigit {
 
     private int findNthDigitII(int number, int idx) {
 
+        return -1;
     }
 
     /**
