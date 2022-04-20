@@ -78,38 +78,4 @@ public class IntersectionOfTwoArray {
         return new int[0];
     }
 
-    /**
-     * This way will still remain the number of elements in each array. Not remove the same element.
-     *
-     * @param nums1
-     * @param nums2
-     * @return
-     */
-    public static int[] intersectionW2(int[] nums1, int[] nums2) {
-        if (nums1.length == 0 || nums2.length == 0) {
-            return new int[0];
-        }
-
-        Map<Integer, Integer> countNumbers = new HashMap<>();
-        for (int i = 0; i < nums1.length; ++i) {
-            countNumbers.put(nums1[i], countNumbers.getOrDefault(nums1[i], 0) + 1);
-        }
-
-        List<Integer> res = new ArrayList<>();
-        for (int i = 0; i < nums2.length; ++i) {
-            if (countNumbers.containsKey(nums2[i])) {
-                int num = countNumbers.get(nums2[i]);
-
-                if (num == 0) {
-                    continue;
-                }
-
-                res.add(nums2[i]);
-                countNumbers.put(nums2[i], num - 1);
-            }
-        }
-
-        return res.stream().mapToInt(t -> t).toArray();
-    }
-
 }
