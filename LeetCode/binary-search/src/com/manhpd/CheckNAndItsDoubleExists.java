@@ -1,5 +1,9 @@
 package com.manhpd;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Ref: https://leetcode.com/problems/check-if-n-and-its-double-exist/
  *
@@ -34,15 +38,80 @@ package com.manhpd;
 public class CheckNAndItsDoubleExists {
 
     public static void main(String[] args) {
-        int[] arr = {10, 2, 5, 3};
+//        int[] arr = {10, 2, 5, 3};
 //        int[] arr = {7, 1, 14, 11};
-//        int[] arr = {3, 1, 7, 11};
+        int[] arr = {3, 1, 7, 11};
+//        int[] arr = {3, 2, 1, 1};
 
-        boolean res = checkIfExist(arr);
+        boolean res = checkIfExistV3(arr);
         System.out.println("Result: " + res);
     }
 
+    /**
+     * Using Set to check an element exists or not.
+     *
+     * @param arr
+     * @return
+     */
     public static boolean checkIfExist(int[] arr) {
+        Arrays.sort(arr);
+        Set<Integer> data = new HashSet<>();
+
+        for (int i = 0; i < arr.length; ++i) {
+            int currentValue = arr[i];
+
+            if (i > 0 && currentValue != 0 && currentValue == arr[i - 1]) {
+                continue;
+            }
+
+            if (data.contains(2 * currentValue) || data.contains(currentValue)) {
+                return true;
+            }
+
+            data.add(currentValue);
+            data.add(2 * currentValue);
+        }
+
+        return false;
+    }
+
+    /**
+     * Using Binary Search algorithm.
+     *
+     * @param arr
+     * @return
+     */
+    public static boolean checkIfExistV2(int[] arr) {
+        Arrays.sort(arr);
+
+        for (int i = 0; i < arr.length; ++i) {
+            int currentValue = arr[i];
+            int idx = Arrays.binarySearch(arr, 0, arr.length - 1, currentValue);
+
+//            if (idx)
+        }
+
+        return false;
+    }
+
+    /**
+     * Using brute-force algorithm
+     *
+     * @param arr
+     * @return
+     */
+    public static boolean checkIfExistV3(int[] arr) {
+        int length = arr.length;
+
+        for (int i = 0; i < length; ++i) {
+            for (int j = 0; j < length; ++j) {
+                if (i != j) {
+                    if (arr[i] == 2 * arr[j]) {
+                        return true;
+                    }
+                }
+            }
+        }
 
         return false;
     }
