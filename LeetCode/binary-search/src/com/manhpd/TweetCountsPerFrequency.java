@@ -51,6 +51,9 @@ import java.util.List;
  * 0 <= endTime - startTime <= 104
  * There will be at most 104 calls in total to recordTweet and getTweetCountsPerFrequency.
  *
+ * This solution didn't work. Because:
+ * - Using array list to contain all tweets. So find the tweet based on its name makes to iterate this array. It's really slow.
+ *
  */
 public class TweetCountsPerFrequency {
 
@@ -75,6 +78,16 @@ public class TweetCountsPerFrequency {
         this.tweetInfos.add(insertPosition, currentTweetInfo);
     }
 
+    /**
+     * When using binary search for this problem, we can refer to this article in Python's solution:
+     * https://leetcode.com/problems/tweet-counts-per-frequency/discuss/922832/100.00-Runtime-fast-and-short-binary-search-solution
+     *
+     * @param freq
+     * @param tweetName
+     * @param startTime
+     * @param endTime
+     * @return
+     */
     public List<Integer> getTweetCountsPerFrequency(String freq, String tweetName, int startTime, int endTime) {
         int otherEndTime = this.getOtherEndTime(freq, startTime, endTime);
         int startIdx = this.searchInsertPosition(new TweetInfo(tweetName, startTime));
@@ -82,14 +95,30 @@ public class TweetCountsPerFrequency {
 
         List<Integer> res = new ArrayList<>();
         int timeChunks = this.getTimeChunks(freq);
-        for (int i = startIdx; i < endIdx; ++i) {
+        int i = startIdx;
+        int nextChunksIdx = -1;
+        while (i <= endIdx) {
+//        for (int i = startIdx; i < endIdx; ++i) {
             TweetInfo currentTweet = this.tweetInfos.get(i);
-            int nextChunksIdx = this.searchInsertPosition(new TweetInfo(tweetName, currentTweet.time + timeChunks));
+            nextChunksIdx = this.searchInsertPosition(new TweetInfo(tweetName, currentTweet.time + timeChunks));
 
-            // TODO
+            if (nextChunksIdx > endIdx) {
+                nextChunksIdx = endIdx;
+            }
+
+            int count = 0;
+            for (int j = i; j <= nextChunksIdx; ++j) {
+                TweetInfo tmpTweet = this.tweetInfos.get(j);
+                if (tmpTweet.tweetName.equals(tweetName) && tmpTweet.time <= currentTweet.time + timeChunks) {
+                    ++count;
+                }
+            }
+
+            res.add(count);
+            i = nextChunksIdx;
         }
 
-        return Collections.emptyList();
+        return res;
     }
 
     private int getOtherEndTime(String freq, int startTime, int endTime) {
@@ -158,9 +187,13 @@ public class TweetCountsPerFrequency {
         tweetCounts.recordTweet("tweet3", 0);                              // New tweet "tweet3" at time 0
         tweetCounts.recordTweet("tweet3", 60);                             // New tweet "tweet3" at time 60
         tweetCounts.recordTweet("tweet3", 10);                             // New tweet "tweet3" at time 10
-//        tweetCounts.getTweetCountsPerFrequency("minute", "tweet3", 0, 59); // return [2]; chunk [0,59] had 2 tweets
-//        tweetCounts.getTweetCountsPerFrequency("minute", "tweet3", 0, 60); // return [2,1]; chunk [0,59] had 2 tweets, chunk [60,60] had 1 tweet
-        tweetCounts.recordTweet("tweet3", 120);                            // New tweet "tweet3" at time 120
+        List<Integer> res = new ArrayList<>();
+//         res = tweetCounts.getTweetCountsPerFrequency("minute", "tweet3", 0, 59); // return [2]; chunk [0,59] had 2 tweets
+//        System.out.println(res.toString());
+
+        res = tweetCounts.getTweetCountsPerFrequency("minute", "tweet3", 0, 60); // return [2,1]; chunk [0,59] had 2 tweets, chunk [60,60] had 1 tweet
+        System.out.println(res.toString());
+//        tweetCounts.recordTweet("tweet3", 120);                            // New tweet "tweet3" at time 120
 //        tweetCounts.getTweetCountsPerFrequency("hour", "tweet3", 0, 210);  // return [4]; chunk [0,210] had 4 tweets
     }
 
