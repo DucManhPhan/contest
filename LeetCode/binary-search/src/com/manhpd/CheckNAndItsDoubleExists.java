@@ -40,10 +40,13 @@ public class CheckNAndItsDoubleExists {
     public static void main(String[] args) {
 //        int[] arr = {10, 2, 5, 3};
 //        int[] arr = {7, 1, 14, 11};
-        int[] arr = {3, 1, 7, 11};
+//        int[] arr = {3, 1, 7, 11};
 //        int[] arr = {3, 2, 1, 1};
+//        int[] arr = {-2, 0, 10, -19, 4, 6, -8};
+        int[] arr = {0, 0};
 
-        boolean res = checkIfExistV3(arr);
+//        boolean res = checkIfExistV3(arr);
+        boolean res = checkIfExistV2(arr);
         System.out.println("Result: " + res);
     }
 
@@ -82,13 +85,19 @@ public class CheckNAndItsDoubleExists {
      * @return
      */
     public static boolean checkIfExistV2(int[] arr) {
+        if (arr == null || arr.length < 2) {
+            return false;
+        }
+
         Arrays.sort(arr);
 
         for (int i = 0; i < arr.length; ++i) {
             int currentValue = arr[i];
-            int idx = Arrays.binarySearch(arr, 0, arr.length - 1, currentValue);
+            int idx = Arrays.binarySearch(arr, 2 * currentValue);
 
-//            if (idx)
+            if (idx >= 0 && idx != i) {
+                return true;
+            }
         }
 
         return false;
