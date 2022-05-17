@@ -2,6 +2,7 @@ package com.manhpd;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -91,6 +92,7 @@ public class TweetCountsPerFrequency {
         List<Integer> timesPerTweet = this.tweetInfos.get(tweetName);
         int startIdx = this.searchInsertPosition(timesPerTweet, startTime);
         int endIdx = this.searchInsertPosition(timesPerTweet, endTime);
+//        int startIdx = Arrays.binarySearch(timesPerTweet.toArray(new int[0]))
 
         int duration = this.freqs.get(freq);
         int outputSize = ((endTime - startTime) / duration) + 1;
@@ -98,16 +100,8 @@ public class TweetCountsPerFrequency {
         int[] res = new int[outputSize];
 
         for (int i = startIdx; i <= endIdx; ++i) {
-            int tmpResIdx = -1;
-            if (i < timesPerTweet.size()) {
-                 tmpResIdx = (timesPerTweet.get(i) - startTime) / duration;
-            } else {
-                break;
-            }
-
-            if (tmpResIdx < outputSize) {
-                res[tmpResIdx] += 1;
-            }
+            int tmpResIdx = (timesPerTweet.get(i) - startTime) / duration;
+            res[tmpResIdx] += 1;
         }
 
         List<Integer> output = new ArrayList<>();
@@ -151,13 +145,13 @@ public class TweetCountsPerFrequency {
         tweetCounts.recordTweet("tweet3", 0);                              // New tweet "tweet3" at time 0
         tweetCounts.recordTweet("tweet3", 60);                             // New tweet "tweet3" at time 60
         tweetCounts.recordTweet("tweet3", 10);                             // New tweet "tweet3" at time 10
-        List<Integer> res = new ArrayList<>();
-//        List<Integer> res = tweetCounts.getTweetCountsPerFrequency("minute", "tweet3", 0, 59); // return [2]; chunk [0,59] had 2 tweets
-//        System.out.println(res);
-
-//        res = tweetCounts.getTweetCountsPerFrequency("minute", "tweet3", 0, 60); // return [2,1]; chunk [0,59] had 2 tweets, chunk [60,60] had 1 tweet
-//        System.out.println(res);
-
+//        List<Integer> res = new ArrayList<>();
+        List<Integer> res = tweetCounts.getTweetCountsPerFrequency("minute", "tweet3", 0, 59); // return [2]; chunk [0,59] had 2 tweets
+        System.out.println(res);
+//
+        res = tweetCounts.getTweetCountsPerFrequency("minute", "tweet3", 0, 60); // return [2,1]; chunk [0,59] had 2 tweets, chunk [60,60] had 1 tweet
+        System.out.println(res);
+//
         tweetCounts.recordTweet("tweet3", 120);                            // New tweet "tweet3" at time 120
         res = tweetCounts.getTweetCountsPerFrequency("hour", "tweet3", 0, 210);  // return [4]; chunk [0,210] had 4 tweets
         System.out.println(res);
