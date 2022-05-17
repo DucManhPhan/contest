@@ -1,8 +1,8 @@
 package com.manhpd;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Ref: https://leetcode.com/problems/tweet-counts-per-frequency/
@@ -54,103 +54,66 @@ import java.util.List;
  */
 public class TweetCountsPerFrequency {
 
-    private List<TweetInfo> tweetInfos;
+    private Map<String, List<Integer>> tweetInfos;
 
-    private String[] freqs = {"minute", "hour", "day"};
-
-    private int[] timeChunks = {59, 3599, 86399};
+    private Map<String, Integer> freqs;
 
     public TweetCountsPerFrequency() {
-        this.tweetInfos = new ArrayList<>();
+        this.tweetInfos = new HashMap<>();
+
+        this.freqs = new HashMap<>();
+        this.freqs.put("minute", 60);
+        this.freqs.put("hour", 3600);
+        this.freqs.put("day", 86400);
     }
 
     public void recordTweet(String tweetName, int time) {
-        final TweetInfo currentTweetInfo = new TweetInfo(tweetName, time);
-        if (this.tweetInfos.size() == 0) {
-            this.tweetInfos.add(currentTweetInfo);
-            return;
-        }
+        List<Integer> currentTimesPerTweet = this.tweetInfos.computeIfAbsent(tweetName, t -> new ArrayList<>());
 
-        int insertPosition = this.searchInsertPosition(currentTweetInfo);
-        this.tweetInfos.add(insertPosition, currentTweetInfo);
+        int idx = this.searchInsertPosition(currentTimesPerTweet, time);
+        currentTimesPerTweet.add(idx, time);
     }
 
     public List<Integer> getTweetCountsPerFrequency(String freq, String tweetName, int startTime, int endTime) {
-        int otherEndTime = this.getOtherEndTime(freq, startTime, endTime);
-        int startIdx = this.searchInsertPosition(new TweetInfo(tweetName, startTime));
-        int endIdx = this.searchInsertPosition(new TweetInfo(tweetName, otherEndTime));
+        List<Integer> timesPerTweet = this.tweetInfos.get(tweetName);
+        int startIdx = this.searchInsertPosition(timesPerTweet, startTime);
+        int endIdx = this.searchInsertPosition(timesPerTweet, endTime);
 
-        List<Integer> res = new ArrayList<>();
-        int timeChunks = this.getTimeChunks(freq);
-        for (int i = startIdx; i < endIdx; ++i) {
-            TweetInfo currentTweet = this.tweetInfos.get(i);
-            int nextChunksIdx = this.searchInsertPosition(new TweetInfo(tweetName, currentTweet.time + timeChunks));
+        int duration = this.freqs.get(freq);
+        int outputSize = ((endTime - startTime) / duration) + 1;
+//        List<Integer> res = new ArrayList<>(outputSize);
+        int[] res = new int[outputSize];
 
-            // TODO
+        for (int i = startIdx; i <= endIdx; ++i) {
+            int tmpResIdx = (timesPerTweet.get(i) - startTime) / duration;
+            res[tmpResIdx] += 1;
         }
 
-        return Collections.emptyList();
+        return Stream.of(res).collect(Collectors.toCollection(ArrayList::new));
     }
 
-    private int getOtherEndTime(String freq, int startTime, int endTime) {
-        int otherEndTime = 0;
-        for (int i = 0; i < this.freqs.length; ++i) {
-            String currentFreq = this.freqs[i];
-            if (currentFreq.equals(freq)) {
-                if (endTime > this.timeChunks[i] + startTime) {
-                    otherEndTime = this.timeChunks[i] + startTime;
-                } else {
-                    otherEndTime = endTime;
-                }
-            }
-        }
-
-        return otherEndTime;
-    }
-
-    private int getTimeChunks(String freq) {
-        for (int i = 0; i < this.freqs.length; ++i) {
-            String currentFreq = this.freqs[i];
-            if (currentFreq.equals(freq)) {
-                return this.timeChunks[i];
-            }
-        }
-
-        return -1;
-    }
-
-    private int searchInsertPosition(TweetInfo tweetInfo) {
+    private int searchInsertPosition(List<Integer> timesPerTweet, int currentTime) {
         int left = 0;
-        int right = this.tweetInfos.size();
+        int right = timesPerTweet.size();
 
         while (left + 1 < right) {
             int mid = left + (right - left) / 2;
 
-            final TweetInfo midTweetInfo = this.tweetInfos.get(mid);
-            if (midTweetInfo.time == tweetInfo.time) {
+            int midTime = timesPerTweet.get(mid);
+            if (midTime == currentTime) {
                 return mid;
-            } else if (midTweetInfo.time < tweetInfo.time) {
+            } else if (midTime < currentTime) {
                 left = mid;
             } else {
                 right = mid;
             }
         }
 
-        if (this.tweetInfos.get(left).time >= tweetInfo.time) {
+        if (timesPerTweet.get(left) >= currentTime) {
             return left;
         }
 
         return right;
-    }
-
-    class TweetInfo {
-        public String tweetName;
-        public int time;
-
-        public TweetInfo(String tweetName, int time) {
-            this.tweetName = tweetName;
-            this.time = time;
-        }
     }
 
     public static void main(String[] args) {
@@ -160,7 +123,7 @@ public class TweetCountsPerFrequency {
         tweetCounts.recordTweet("tweet3", 10);                             // New tweet "tweet3" at time 10
 //        tweetCounts.getTweetCountsPerFrequency("minute", "tweet3", 0, 59); // return [2]; chunk [0,59] had 2 tweets
 //        tweetCounts.getTweetCountsPerFrequency("minute", "tweet3", 0, 60); // return [2,1]; chunk [0,59] had 2 tweets, chunk [60,60] had 1 tweet
-        tweetCounts.recordTweet("tweet3", 120);                            // New tweet "tweet3" at time 120
+//        tweetCounts.recordTweet("tweet3", 120);                            // New tweet "tweet3" at time 120
 //        tweetCounts.getTweetCountsPerFrequency("hour", "tweet3", 0, 210);  // return [4]; chunk [0,210] had 4 tweets
     }
 
