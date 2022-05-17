@@ -1,14 +1,13 @@
 package com.manhpd;
 
+import sun.reflect.generics.tree.Tree;
+
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Ref: https://leetcode.com/problems/tweet-counts-per-frequency/
  *
- * A social media company is trying to monitor activity on their site by analyzing the number of tweets that occur in select periods of time.
- * These periods can be partitioned into smaller time chunks based on a certain frequency (every minute, hour, or day).
+ * A social media company is trying to monitor activity on their site by analyzing the number of tweets that occur in select periods of time. These periods can be partitioned into smaller time chunks based on a certain frequency (every minute, hour, or day).
  *
  * For example, the period [10, 10000] (in seconds) would be partitioned into the following time chunks with these frequencies:
  *
@@ -26,7 +25,9 @@ import java.util.stream.Stream;
  * List<Integer> getTweetCountsPerFrequency(String freq, String tweetName, int startTime, int endTime) Returns a list of integers representing the number of tweets with tweetName in each time chunk for the given period of time [startTime, endTime] (in seconds) and frequency freq.
  * freq is one of "minute", "hour", or "day" representing a frequency of every minute, hour, or day respectively.
  *
+ *
  * Example:
+ *
  * Input
  * ["TweetCounts","recordTweet","recordTweet","recordTweet","getTweetCountsPerFrequency","getTweetCountsPerFrequency","recordTweet","getTweetCountsPerFrequency"]
  * [[],["tweet3",0],["tweet3",60],["tweet3",10],["minute","tweet3",0,59],["minute","tweet3",0,60],["tweet3",120],["hour","tweet3",0,210]]
@@ -51,116 +52,53 @@ import java.util.stream.Stream;
  * 0 <= endTime - startTime <= 104
  * There will be at most 104 calls in total to recordTweet and getTweetCountsPerFrequency.
  *
- * This solution didn't work. Because:
- * - Using array list to contain all tweets. So find the tweet based on its name makes to iterate this array. It's really slow.
- *
  */
-public class TweetCountsPerFrequency {
+public class TweetCountsPerFrequencyV2 {
 
-    private Map<String, List<Integer>> tweetInfos;
+    private Map<String, TreeSet<Integer>> map = new HashMap<>();
 
-    private Map<String, Integer> freqs;
+    private Map<String, Integer> meta = new HashMap<>();
 
-    public TweetCountsPerFrequency() {
-        this.tweetInfos = new HashMap<>();
-
-        this.freqs = new HashMap<>();
-        this.freqs.put("minute", 60);
-        this.freqs.put("hour", 3600);
-        this.freqs.put("day", 86400);
+    public TweetCountsPerFrequencyV2() {
+        this.meta.put("minute", 60);
+        this.meta.put("hour", 3600);
+        this.meta.put("day", 86400);
     }
 
     public void recordTweet(String tweetName, int time) {
-        List<Integer> currentTimesPerTweet = this.tweetInfos.computeIfAbsent(tweetName, t -> new ArrayList<>());
-
-        int idx = this.searchInsertPosition(currentTimesPerTweet, time);
-        currentTimesPerTweet.add(idx, time);
+        this.map.computeIfAbsent(tweetName, t -> new TreeSet<Integer>()).add(time);
     }
 
-    /**
-     * When using binary search for this problem, we can refer to this article in Python's solution:
-     * https://leetcode.com/problems/tweet-counts-per-frequency/discuss/922832/100.00-Runtime-fast-and-short-binary-search-solution
-     *
-     * @param freq
-     * @param tweetName
-     * @param startTime
-     * @param endTime
-     * @return
-     */
     public List<Integer> getTweetCountsPerFrequency(String freq, String tweetName, int startTime, int endTime) {
-        List<Integer> timesPerTweet = this.tweetInfos.get(tweetName);
-        int startIdx = this.searchInsertPosition(timesPerTweet, startTime);
-        int endIdx = this.searchInsertPosition(timesPerTweet, endTime);
+        TreeSet<Integer> subset = (TreeSet<Integer>) map.getOrDefault(tweetName, new TreeSet<Integer>())
+                                                        .subSet(startTime, true, endTime, true);
+        List<Integer> out = new ArrayList<>();
+        int chunk = this.meta.get(freq);
 
-        int duration = this.freqs.get(freq);
-        int outputSize = ((endTime - startTime) / duration) + 1;
-//        List<Integer> res = new ArrayList<>(outputSize);
-        int[] res = new int[outputSize];
-
-        for (int i = startIdx; i <= endIdx; ++i) {
-            int tmpResIdx = -1;
-            if (i < timesPerTweet.size()) {
-                 tmpResIdx = (timesPerTweet.get(i) - startTime) / duration;
-            } else {
-                break;
-            }
-
-            if (tmpResIdx < outputSize) {
-                res[tmpResIdx] += 1;
-            }
+        for (int i = startTime; i <= endTime; i = i + chunk) {
+            final int iEndRange = Math.min(i + chunk - 1, endTime);
+            out.add(subset.subSet(i, true, iEndRange, true)
+                          .size());
         }
 
-        List<Integer> output = new ArrayList<>();
-        for (int tmp : res) {
-            output.add(tmp);
-        }
-
-        return output;
-    }
-
-    private int searchInsertPosition(List<Integer> timesPerTweet, int currentTime) {
-        if (timesPerTweet.size() == 0) {
-            return 0;
-        }
-
-        int left = 0;
-        int right = timesPerTweet.size();
-
-        while (left + 1 < right) {
-            int mid = left + (right - left) / 2;
-
-            int midTime = timesPerTweet.get(mid);
-            if (midTime == currentTime) {
-                return mid;
-            } else if (midTime < currentTime) {
-                left = mid;
-            } else {
-                right = mid;
-            }
-        }
-
-        if (timesPerTweet.get(left) >= currentTime) {
-            return left;
-        }
-
-        return right;
+        return out;
     }
 
     public static void main(String[] args) {
-        TweetCountsPerFrequency tweetCounts = new TweetCountsPerFrequency();
+        TweetCountsPerFrequencyV2 tweetCounts = new TweetCountsPerFrequencyV2();
         tweetCounts.recordTweet("tweet3", 0);                              // New tweet "tweet3" at time 0
         tweetCounts.recordTweet("tweet3", 60);                             // New tweet "tweet3" at time 60
         tweetCounts.recordTweet("tweet3", 10);                             // New tweet "tweet3" at time 10
         List<Integer> res = new ArrayList<>();
-//        List<Integer> res = tweetCounts.getTweetCountsPerFrequency("minute", "tweet3", 0, 59); // return [2]; chunk [0,59] had 2 tweets
-//        System.out.println(res);
+         res = tweetCounts.getTweetCountsPerFrequency("minute", "tweet3", 0, 59); // return [2]; chunk [0,59] had 2 tweets
+        System.out.println(res.toString());
 
-//        res = tweetCounts.getTweetCountsPerFrequency("minute", "tweet3", 0, 60); // return [2,1]; chunk [0,59] had 2 tweets, chunk [60,60] had 1 tweet
-//        System.out.println(res);
+        res = tweetCounts.getTweetCountsPerFrequency("minute", "tweet3", 0, 60); // return [2,1]; chunk [0,59] had 2 tweets, chunk [60,60] had 1 tweet
+        System.out.println(res.toString());
 
         tweetCounts.recordTweet("tweet3", 120);                            // New tweet "tweet3" at time 120
         res = tweetCounts.getTweetCountsPerFrequency("hour", "tweet3", 0, 210);  // return [4]; chunk [0,210] had 4 tweets
-        System.out.println(res);
+        System.out.println(res.toString());
     }
 
 }
