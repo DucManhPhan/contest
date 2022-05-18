@@ -74,7 +74,7 @@ public class TweetCountsPerFrequency {
     public void recordTweet(String tweetName, int time) {
         List<Integer> currentTimesPerTweet = this.tweetInfos.computeIfAbsent(tweetName, t -> new ArrayList<>());
 
-        int idx = this.searchInsertPosition(currentTimesPerTweet, time);
+        int idx = this.lowerBound(currentTimesPerTweet, time);
         currentTimesPerTweet.add(idx, time);
     }
 
@@ -90,16 +90,14 @@ public class TweetCountsPerFrequency {
      */
     public List<Integer> getTweetCountsPerFrequency(String freq, String tweetName, int startTime, int endTime) {
         List<Integer> timesPerTweet = this.tweetInfos.get(tweetName);
-        int startIdx = this.searchInsertPosition(timesPerTweet, startTime);
-        int endIdx = this.searchInsertPosition(timesPerTweet, endTime);
-//        int startIdx = Arrays.binarySearch(timesPerTweet.toArray(new int[0]))
+        int startIdx = this.lowerBound(timesPerTweet, startTime);
+        int endIdx = this.upperBound(timesPerTweet, endTime);
 
         int duration = this.freqs.get(freq);
         int outputSize = ((endTime - startTime) / duration) + 1;
-//        List<Integer> res = new ArrayList<>(outputSize);
         int[] res = new int[outputSize];
 
-        for (int i = startIdx; i <= endIdx; ++i) {
+        for (int i = startIdx; i < endIdx; ++i) {
             int tmpResIdx = (timesPerTweet.get(i) - startTime) / duration;
             res[tmpResIdx] += 1;
         }
@@ -112,32 +110,62 @@ public class TweetCountsPerFrequency {
         return output;
     }
 
-    private int searchInsertPosition(List<Integer> timesPerTweet, int currentTime) {
-        if (timesPerTweet.size() == 0) {
-            return 0;
-        }
+    /**
+     * Find the first element that is greater than or equal to target
+     *
+     * @param timesPerTweet
+     * @param currentTime
+     * @return
+     */
+    private int lowerBound(List<Integer> timesPerTweet, int currentTime) {
+        int blue = -1;
+        int red = timesPerTweet.size();
 
-        int left = 0;
-        int right = timesPerTweet.size();
-
-        while (left + 1 < right) {
-            int mid = left + (right - left) / 2;
+        while (blue + 1 != red) {
+            int mid = blue + (red - blue) / 2;
 
             int midTime = timesPerTweet.get(mid);
-            if (midTime == currentTime) {
-                return mid;
-            } else if (midTime < currentTime) {
-                left = mid;
+            if (midTime < currentTime) {
+                blue = mid;
             } else {
-                right = mid;
+                red = mid;
             }
         }
 
-        if (timesPerTweet.get(left) >= currentTime) {
-            return left;
+        if (red < timesPerTweet.size() && timesPerTweet.get(red) >= currentTime) {
+            return red;
         }
 
-        return right;
+        return timesPerTweet.size();
+    }
+
+    /**
+     * Find the first element that is greater than target
+     *
+     * @param timesPerTweet
+     * @param currentTime
+     * @return
+     */
+    private int upperBound(List<Integer> timesPerTweet, int currentTime) {
+        int blue = -1;
+        int red = timesPerTweet.size();
+
+        while (blue + 1 != red) {
+            int mid = blue + (red - blue) / 2;
+
+            int midTime = timesPerTweet.get(mid);
+            if (midTime <= currentTime) {
+                blue = mid;
+            } else  {
+                red = mid;
+            }
+        }
+
+        if (red < timesPerTweet.size() && timesPerTweet.get(red) > currentTime) {
+            return red;
+        }
+
+        return timesPerTweet.size();
     }
 
     public static void main(String[] args) {
