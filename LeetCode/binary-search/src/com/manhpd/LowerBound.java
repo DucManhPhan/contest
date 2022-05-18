@@ -10,6 +10,9 @@ public class LowerBound {
 
     }
 
+    public int lowerBound(int[] nums, int target) {
 
+        return nums.length;
+    }
 
 }
