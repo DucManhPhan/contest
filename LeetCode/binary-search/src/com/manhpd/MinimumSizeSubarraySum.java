@@ -1,6 +1,7 @@
 package com.manhpd;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,8 +33,8 @@ import java.util.List;
 public class MinimumSizeSubarraySum {
 
     public static void main(String[] args) {
-//        int[] nums = {2, 3, 1, 2, 4, 3};
-//        int target = 7;
+        int[] nums = {2, 3, 1, 2, 4, 3};
+        int target = 7;
 
 //        int[] nums = {1, 1, 1, 1, 7};
 //        int target = 7;
@@ -41,11 +42,12 @@ public class MinimumSizeSubarraySum {
 //        int[] nums = {1,1,1,1,1,1,1,1};
 //        int target = 11;
 
-        int[] nums = {2,16,14,15};
-        int target = 20;
+//        int[] nums = {2,16,14,15};
+//        int target = 20;
 
 //        int res = minSubArrayLen(target, nums);
-        int res = minSubArrayLenV3(target, nums);
+//        int res = minSubArrayLenV3(target, nums);
+        int res = minSubArrayLenV2(target, nums);
         System.out.println("Result: " + res);
     }
 
@@ -105,9 +107,55 @@ public class MinimumSizeSubarraySum {
      * @param nums
      * @return
      */
-    public int minSubArrayLenV2(int target, int[] nums) {
+    public static int minSubArrayLenV2(int target, int[] nums) {
+        int[] prefixSum = prefixSum(nums);
+        System.out.println(Arrays.toString(prefixSum));
+
+        int lowerBound = lowerBound(prefixSum, target);
+        if (lowerBound == -1) {
+            return 0;
+        }
+
+        return nums.length - lowerBound - 1;
+    }
+
+    /**
+     * Find the first element that is greater than or equal to target
+     *
+     * @param prefixSum
+     * @param target
+     * @return
+     */
+    private static int lowerBound(int[] prefixSum, int target) {
+        int low = -1;
+        int high = prefixSum.length;
+
+        while (low + 1 != high) {
+            int mid = low + (high - low) / 2;
+
+            if (prefixSum[mid] < target) {
+                low = mid;
+            } else {
+                high = mid;
+            }
+        }
+
+        if (high < prefixSum.length) {
+            return high;
+        }
 
         return -1;
+    }
+
+    private static int[] prefixSum(int[] nums) {
+        int[] prefixSum = new int[nums.length];
+        prefixSum[0] = nums[0];
+
+        for (int i = 1; i < nums.length; ++i) {
+            prefixSum[i] = prefixSum[i - 1] + nums[i];
+        }
+
+        return prefixSum;
     }
 
     /**
