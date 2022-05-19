@@ -35,13 +35,17 @@ public class MinimumSizeSubarraySum {
 //        int[] nums = {2, 3, 1, 2, 4, 3};
 //        int target = 7;
 
+//        int[] nums = {1, 1, 1, 1, 7};
+//        int target = 7;
+
 //        int[] nums = {1,1,1,1,1,1,1,1};
 //        int target = 11;
 
         int[] nums = {2,16,14,15};
         int target = 20;
 
-        int res = minSubArrayLen(target, nums);
+//        int res = minSubArrayLen(target, nums);
+        int res = minSubArrayLenV3(target, nums);
         System.out.println("Result: " + res);
     }
 
@@ -104,6 +108,37 @@ public class MinimumSizeSubarraySum {
     public int minSubArrayLenV2(int target, int[] nums) {
 
         return -1;
+    }
+
+    /**
+     * Using brute-force to iterate all contiguous arrays.
+     *
+     * @param target
+     * @param nums
+     * @return
+     */
+    public static int minSubArrayLenV3(int target, int[] nums) {
+        int minSize = Integer.MAX_VALUE;
+        int outerIdx = -1;
+        int innerIdx = -1;
+
+        for (outerIdx = 0; outerIdx < nums.length; ++outerIdx) {
+            int sum = 0;
+            for (innerIdx = outerIdx; innerIdx < nums.length; ++innerIdx) {
+                sum += nums[innerIdx];
+
+                if (sum >= target) {
+                    minSize = Math.min(minSize, innerIdx - outerIdx + 1);
+                    break;
+                }
+            }
+        }
+
+        if (minSize == Integer.MAX_VALUE) {
+            return 0;
+        }
+
+        return minSize;
     }
 
 }
