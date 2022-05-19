@@ -101,22 +101,55 @@ public class MinimumSizeSubarraySum {
     }
 
     /**
-     * Using Binary Search algorithm
+     * Using Binary Search algorithm with Sliding window
      *
      * @param target
      * @param nums
      * @return
      */
     public static int minSubArrayLenV2(int target, int[] nums) {
-        int[] prefixSum = prefixSum(nums);
-        System.out.println(Arrays.toString(prefixSum));
+        int low = 0;
+        int high = nums.length + 1;
+        boolean enter = false;
 
-        int lowerBound = lowerBound(prefixSum, target);
-        if (lowerBound == -1) {
+        while (low < high) {
+            int mid = low + ((high - low) >> 1);
+            if (greaterThanTarget(nums, target, mid)) {
+                enter = true;
+                high = mid;
+            } else {
+                low = mid + 1;
+            }
+        }
+
+        if (!enter) {
             return 0;
         }
 
-        return nums.length - lowerBound - 1;
+        return high;
+    }
+
+    private static boolean greaterThanTarget(int[] nums, int target, int window) {
+        int sums = 0;
+
+        for (int i = 0; i < window; ++i) {
+            sums += nums[i];
+        }
+
+        for (int i = 0; i < nums.length - window; ++i) {
+            if (sums >= target) {
+                return true;
+            }
+
+            sums -= nums[i];
+            sums += nums[i + window];
+        }
+
+        if (sums >= target) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
