@@ -47,7 +47,8 @@ public class MinimumSizeSubarraySum {
 
 //        int res = minSubArrayLen(target, nums);
 //        int res = minSubArrayLenV3(target, nums);
-        int res = minSubArrayLenV2(target, nums);
+//        int res = minSubArrayLenV2(target, nums);
+        int res = minSubArrayLenV5(target, nums);
         System.out.println("Result: " + res);
     }
 
@@ -220,6 +221,74 @@ public class MinimumSizeSubarraySum {
         }
 
         return minSize;
+    }
+
+    /**
+     * Using prefix-sum to reduce our working when calculating sum of each sub-array in the brute-force solution
+     *
+     * @param target
+     * @param nums
+     * @return
+     */
+    public static int minSubArrayLenV4(int target, int[] nums) {
+        int size = nums.length;
+        if (size == 0) {
+            return 0;
+        }
+
+        int minSubarraySize = Integer.MAX_VALUE;
+        int[] prefixSum = new int[size];
+        prefixSum[0] = nums[0];
+
+        for (int i = 1; i < size; ++i) {
+            prefixSum[i] = prefixSum[i - 1] + nums[i];
+        }
+
+        for (int i = 0; i < size; ++i) {
+            for (int j = i; j < size; ++j) {
+                int sum = prefixSum[j] - prefixSum[i] + nums[i];
+                if (sum >= target) {
+                    minSubarraySize = Math.min(minSubarraySize, j - i + 1);
+                    break;
+                }
+            }
+        }
+
+        return (minSubarraySize != Integer.MAX_VALUE) ? minSubarraySize : 0;
+    }
+
+    /**
+     * Using Binary Search algorithm for prefix-sum array
+     *
+     * @param target
+     * @param nums
+     * @return
+     */
+    public static int minSubArrayLenV5(int target, int[] nums) {
+        int size = nums.length;
+        if (size == 0) {
+            return 0;
+        }
+
+        int[] sums = new int[size + 1];
+        Arrays.fill(sums, 0);
+
+        for (int i = 1; i <= size; ++i) {
+            sums[i] = sums[i - 1] + nums[i - 1];
+        }
+
+        System.out.println("Sums: " + Arrays.toString(sums));
+        int minSubArraySize = Integer.MAX_VALUE;
+
+        for (int i = 1; i <= size; ++i) {
+            int value = target + sums[i - 1];
+            int idx = lowerBound(sums, value);
+            if (idx != -1) {
+                minSubArraySize = Math.min(minSubArraySize, idx - i + 1);
+            }
+        }
+
+        return (minSubArraySize != Integer.MAX_VALUE) ? minSubArraySize : 0;
     }
 
 }
