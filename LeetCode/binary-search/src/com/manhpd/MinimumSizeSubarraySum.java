@@ -273,6 +273,9 @@ public class MinimumSizeSubarraySum {
         int[] sums = new int[size + 1];
         Arrays.fill(sums, 0);
 
+        // sums[0]=0 : Meaning that it is the sum of first 0 elements
+        // sums[1]=A[0] : Sum of first 1 elements
+        // ans so on...
         for (int i = 1; i <= size; ++i) {
             sums[i] = sums[i - 1] + nums[i - 1];
         }
@@ -290,5 +293,61 @@ public class MinimumSizeSubarraySum {
 
         return (minSubArraySize != Integer.MAX_VALUE) ? minSubArraySize : 0;
     }
+
+    /**
+     * Using two-pointers
+     *
+     * @param target
+     * @param nums
+     * @return
+     */
+    public static int minSubArrayLenV6(int target, int[] nums) {
+        int i = 0;
+        int minSize = Integer.MAX_VALUE;
+        int sum = 0;
+
+        for (int j = 0; j < nums.length; ++i) {
+            sum += nums[i];
+
+            while (sum >= target) {
+                minSize = Math.min(minSize, j - i + 1);
+                sum -= nums[i];
+                ++i;
+            }
+        }
+
+        return minSize;
+    }
+
+    /**
+     * Using Binary Search with prefix sum
+     *
+     * @param target
+     * @param nums
+     * @return
+     */
+    public static int minSubArrayLenV7(int target, int[] nums) {
+        int[] prefixSum = new int[nums.length + 1];
+        for (int i = 0; i < nums.length; ++i) {
+            prefixSum[i + 1] = prefixSum[i] + nums[i];
+        }
+
+        int minSize = 0;
+        for (int i = 0; i < prefixSum.length; ++i) {
+            int right = Arrays.binarySearch(prefixSum, i, prefixSum.length, prefixSum[i] + target);
+            if (right < 0) {
+                right = -(right + 1);
+            }
+
+            if (right == prefixSum.length) {
+                continue;
+            }
+
+            minSize = (minSize == 0) ? right - i : Math.min(minSize, right - i);
+        }
+
+        return minSize;
+    }
+
 
 }
