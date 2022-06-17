@@ -1,0 +1,32 @@
+1. problem:
+- design a service that can message to multiple applications:
+	- whats app
+	- zalo
+	- skype
+
+2. Analysis
+   - read documentation of these applications to get apis: send message from a specific account on it --> Tinvio account --> Whatsapp.
+   - message-service
+	- send request: applicationType: whatsapp, zalo, ...
+                        message
+		- applicationType:
+			- class WhatsappMessage
+				- tinvio account --> use the api from that application -->   
+			- class ZaloMessage
+
+	- retry pattern.
+	- message in database NoSQL: red-black tree in ram (memtable) --> O(logn), append log --> O(1) 
+		- structure HDD: pointer, sector, segment --> to write data to hdd --> determine which sector, segment --> write data --> write to next position --> fast operation.
+		--> Sorted string on disk --> compaction ---> merge multiple ss into one --> write operation
+
+		- schema of message: id, application Type, message, createdOn, deleted --> successfully --> 1, not send successfully --> 0
+
+3. works under the heavy write request
+
+	- Kafka --> asynchronous mode --> process data in asynchrously --> consumer: message-service.
+		- write request really fast 
+			--> zero-copy mechanism --> applicaltion space vs kernel space.
+				--> buffer in socket (network) --> application space: buffer --> buffer in kernel space --> disk.
+				--> TransferTo() method of NIo class.
+			--> producer encrypt data in binary --> kafka didn't need to encrypt it to save in disk.
+			--> consumer decrypt data.
