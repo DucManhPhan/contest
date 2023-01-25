@@ -19,6 +19,7 @@ public class WordPattern {
         System.out.println("Result: " + wordPattern.wordPattern(pattern, s));
         System.out.println("Result: " + wordPattern.wordPatternV1(pattern, s));
         System.out.println("Result: " + wordPattern.wordPatternV2(pattern, s));
+        System.out.println("Result: " + wordPattern.wordPatternV3(pattern, s));
     }
 
     /**
