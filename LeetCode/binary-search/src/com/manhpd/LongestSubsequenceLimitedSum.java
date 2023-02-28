@@ -1,6 +1,8 @@
 package com.manhpd;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Ref: https://leetcode.com/problems/longest-subsequence-with-limited-sum/
@@ -37,11 +39,11 @@ import java.util.Arrays;
 public class LongestSubsequenceLimitedSum {
 
     public static void main(String[] args) {
-        int[] nums = {4, 5, 2, 1};
-        int[] queries = {3, 10, 21};
+//        int[] nums = {4, 5, 2, 1};
+//        int[] queries = {3, 10, 21};
 
-//        int[] nums = {2, 3, 4, 5};
-//        int[] queries = {1};
+        int[] nums = {2, 3, 4, 5};
+        int[] queries = {1};
 
         int[] res = answerQueries(nums, queries);
         System.out.println(Arrays.toString(res));
@@ -55,9 +57,42 @@ public class LongestSubsequenceLimitedSum {
      * @return
      */
     public static int[] answerQueries(int[] nums, int[] queries) {
+        List<Integer> subsequences = new ArrayList<>();
+        int[] res = new int[queries.length];
 
+        maxLengthOfSubsequences(nums, queries, 0, res, subsequences);
+        return res;
+    }
 
-        return new int[0];
+    private static void maxLengthOfSubsequences(int[] nums, int[] queries, int idx, int[] res, List<Integer> subsequences) {
+        if (idx >= nums.length) {
+            saveMaxLength(queries, res, subsequences);
+            return;
+        }
+
+        if (subsequences.size() != 0) {
+            saveMaxLength(queries, res, subsequences);
+        }
+
+        for (int i = idx; i < nums.length; ++i) {
+            subsequences.add(nums[i]);
+            maxLengthOfSubsequences(nums, queries, i + 1, res, subsequences);
+            subsequences.remove(subsequences.size() - 1);
+        }
+    }
+
+    private static void saveMaxLength(int[] queries, int[] res, List<Integer> subsequences) {
+        int currentSum = subsequences.stream()
+                              .reduce(0, Integer::sum);
+
+        int i = 0;
+        for (int val : queries) {
+            if (currentSum <= val) {
+                res[i] = Math.max(res[i], subsequences.size());
+            }
+
+            ++i;
+        }
     }
 
 }
