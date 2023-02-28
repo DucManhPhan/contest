@@ -1,8 +1,6 @@
 package com.manhpd;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * Ref: https://leetcode.com/problems/longest-subsequence-with-limited-sum/
@@ -39,13 +37,20 @@ import java.util.List;
 public class LongestSubsequenceLimitedSum {
 
     public static void main(String[] args) {
-//        int[] nums = {4, 5, 2, 1};
-//        int[] queries = {3, 10, 21};
+        int[] nums = {4, 5, 2, 1};
+        int[] queries = {3, 10, 21};
 
-        int[] nums = {2, 3, 4, 5};
-        int[] queries = {1};
+//        int[] nums = {9, 8, 10, 13, 7};
+//        int[] queries = {18};
 
-        int[] res = answerQueries(nums, queries);
+//        int[] nums = {2, 3, 4, 5};
+//        int[] queries = {1};
+
+//        int[] res = answerQueries(nums, queries);
+//        int[] res = answerQueriesV1(nums, queries);
+//        int[] res = answerQueriesV2(nums, queries);
+//        int[] res = answerQueriesV3(nums, queries);
+        int[] res = answerQueriesV4(nums, queries);
         System.out.println(Arrays.toString(res));
     }
 
@@ -93,6 +98,162 @@ public class LongestSubsequenceLimitedSum {
 
             ++i;
         }
+    }
+
+    /**
+     * Using Priority Queue
+     *
+     * @param nums
+     * @param queries
+     * @return
+     */
+    public static int[] answerQueriesV1(int[] nums, int[] queries) {
+        int[] res = new int[queries.length];
+        int k = 0;
+
+        for (int max : queries) {
+            PriorityQueue<Integer> pq = new PriorityQueue<>((a, b) -> b - a);
+            int sum = 0;
+
+            for (int n : nums) {
+                if (sum + n > max) {
+                    if (!pq.isEmpty() && pq.peek() > n) {
+                        sum -= pq.remove();
+                        sum += n;
+                        pq.add(n);
+                    }
+                } else {
+                    sum += n;
+                    pq.add(n);
+                }
+            }
+
+            res[k++] = pq.size();
+        }
+
+        return res;
+    }
+
+    /**
+     * Using Binary Search algorithm
+     *
+     * @param nums
+     * @param queries
+     * @return
+     */
+    public static int[] answerQueriesV2(int[] nums, int[] queries) {
+        // sort nums array
+        Arrays.sort(nums);
+
+        int[] prefixSum = new int[nums.length];
+        prefixSum[0] = nums[0];
+
+        // calculate prefix sum array
+        for (int i = 1; i < nums.length; i++) {
+            prefixSum[i] = prefixSum[i - 1] + nums[i];
+        }
+
+        int[] res = new int[queries.length];
+        int i = 0;
+        for (int sum : queries) {
+            int pos = upperBound(prefixSum, sum);
+            if (pos == -1) {
+                res[i++] = 0;
+            } else {
+                res[i++] = pos + 1;
+            }
+        }
+
+        return res;
+    }
+
+    /**
+     * Find an element's index that is less or equal than target
+     */
+    private static int upperBound(int[] prefixSum, int target) {
+        int left = 0;
+        int right = prefixSum.length;
+
+        while (left + 1 < right) {
+            int mid = left + (right - left) / 2;
+
+            if (prefixSum[mid] == target) {
+                return mid;
+            }
+
+            if (prefixSum[mid] < target) {
+                left = mid;
+            } else {
+                right = mid;
+            }
+        }
+
+        if (prefixSum[left] <= target) {
+            return left;
+        }
+
+        return -1;
+    }
+
+    /**
+     * Optimize the way of using Binary Search algorithm
+     *
+     * @param nums
+     * @param queries
+     * @return
+     */
+    public static int[] answerQueriesV3(int[] nums, int[] queries) {
+        Arrays.sort(nums);
+
+        // calculate the prefix sum in-place
+        for (int i = 1; i < nums.length; ++i) {
+            nums[i] += nums[i - 1];
+        }
+
+        int[] res = new int[queries.length];
+        for (int i = 0; i < queries.length; ++i) {
+            int j = 0;
+
+            if (queries[i] >= nums[nums.length - 1]) {
+                res[i] = nums.length;
+            } else {
+                while (nums[j] <= queries[i]) {
+                    ++j;
+                }
+
+                res[i] = j;
+            }
+        }
+
+        return res;
+    }
+
+    /**
+     * Using TreeMap
+     *
+     * @param nums
+     * @param queries
+     * @return
+     */
+    public static int[] answerQueriesV4(int[] nums, int[] queries) {
+        Arrays.sort(nums);
+
+        int sum = 0;
+        TreeMap<Integer, Integer> treeMap = new TreeMap<>();
+        treeMap.put(0, 0);
+
+        for (int i = 0; i < nums.length; ++i) {
+            sum += nums[i];
+            treeMap.put(sum, i + 1);
+        }
+
+        int[] res = new int[queries.length];
+        for (int i = 0; i < queries.length; ++i) {
+            int key = treeMap.floorKey(queries[i]);
+            res[i] = treeMap.get(key);
+        }
+
+        return res;
     }
 
 }
