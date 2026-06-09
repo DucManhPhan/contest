@@ -1,6 +1,8 @@
 package com.manhpd;
 
 /**
+ * Refer: https://leetcode.com/problems/count-pairs-whose-sum-is-less-than-target/description/
+ *
  * Given a 0-indexed integer array nums of length n and an integer target,
  * return the number of pairs (i, j) where 0 <= i < j < n and nums[i] + nums[j] < target.
  *
@@ -82,7 +84,9 @@ public class CountPairsWhoseSumLessThanTarget {
         int i = 0;
         int j = 0;
 
-//        while ()
+//        while () {
+//
+//        }
 
         return 0;
     }
