@@ -96,13 +96,13 @@ public class SubarraySumEqualsK {
         // Count the number of subarrays
         Map<Integer, Integer> mp = new HashMap<>();
         for (int i = 0; i < prefixSum.length; ++i) {
-            if (prefixSum[i] < k) {
-                mp.put(k + prefixSum[i], prefixSum[i]);
-            } else {
-                if (mp.containsKey(prefixSum[i])) {
-                    ++count;
-                }
+            int target = prefixSum[i] - k;
+
+            if (mp.containsKey(target)) {
+                count += mp.get(target);
             }
+
+            mp.put(prefixSum[i], mp.getOrDefault(prefixSum[i], 0) + 1);
         }
 
         return count;
