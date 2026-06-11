@@ -11,11 +11,11 @@ public class ContiguousArray {
 //        int[] nums = {0, 1};
 //        int expected = 2;
 
-//        int[] nums = {0, 1, 0};
-//        int expected = 2;
+        int[] nums = {0, 1, 0};
+        int expected = 2;
 
-        int[] nums = {0, 1, 1, 1, 1, 1, 0, 0, 0};
-        int expected = 6;
+//        int[] nums = {0, 1, 1, 1, 1, 1, 0, 0, 0};
+//        int expected = 6;
 
 //        int[] nums = {1, 1, 1, 1, 1, 1, 1, 1};
 //        int expected = 0;
@@ -23,7 +23,8 @@ public class ContiguousArray {
 //        int res = findMaxLength(nums);
 //        int res = findMaxLength1(nums);
 //        int res = findMaxLength2(nums);
-        int res = findMaxLength3(nums);
+//        int res = findMaxLength3(nums);
+        int res = findMaxLength4(nums);
         System.out.println("Result: " + res);
     }
 
@@ -143,6 +144,33 @@ public class ContiguousArray {
                     int length = j - i + 1;
                     maxLength = Math.max(maxLength, length);
                 }
+            }
+        }
+
+        return maxLength;
+    }
+
+    /**
+     * Optimized the solution Prefix Sum + HashMap
+     *
+     * @param nums
+     * @return
+     */
+    private static int findMaxLength4(int[] nums) {
+        int maxLength = 0;
+
+        Map<Integer, Integer> mp = new HashMap<>();
+        mp.put(0, -1); // Element has 0 value will be corresponding -1
+
+        int prefixSum = 0;
+
+        for (int i = 0; i < nums.length; ++i) {
+            prefixSum += (nums[i] == 1) ? 1 : -1;
+
+            if (mp.containsKey(prefixSum)) {
+                maxLength = Math.max(maxLength, i - mp.get(prefixSum));
+            } else {
+                mp.put(prefixSum, i);
             }
         }
 
