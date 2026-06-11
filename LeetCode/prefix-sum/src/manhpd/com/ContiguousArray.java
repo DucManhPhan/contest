@@ -8,21 +8,22 @@ import java.util.Map;
  */
 public class ContiguousArray {
     public static void main(String[] args) {
-        int[] nums = {0, 1};
-        int expected = 2;
+//        int[] nums = {0, 1};
+//        int expected = 2;
 
 //        int[] nums = {0, 1, 0};
 //        int expected = 2;
 
-//        int[] nums = {0, 1, 1, 1, 1, 1, 0, 0, 0};
-//        int expected = 6;
+        int[] nums = {0, 1, 1, 1, 1, 1, 0, 0, 0};
+        int expected = 6;
 
 //        int[] nums = {1, 1, 1, 1, 1, 1, 1, 1};
 //        int expected = 0;
 
 //        int res = findMaxLength(nums);
 //        int res = findMaxLength1(nums);
-        int res = findMaxLength2(nums);
+//        int res = findMaxLength2(nums);
+        int res = findMaxLength3(nums);
         System.out.println("Result: " + res);
     }
 
@@ -125,8 +126,26 @@ public class ContiguousArray {
     }
 
     private static int findMaxLength3(int[] nums) {
+        int maxLength = 0;
 
+        for (int i = 0; i < nums.length; i++) {
+            int zeros = 0;
+            int ones = 0;
 
-        return 0;
+            for (int j = i; j < nums.length; j++) {
+                if (nums[j] == 0) {
+                    zeros++;
+                } else {
+                    ones++;
+                }
+
+                if (zeros == ones) {
+                    int length = j - i + 1;
+                    maxLength = Math.max(maxLength, length);
+                }
+            }
+        }
+
+        return maxLength;
     }
 }
