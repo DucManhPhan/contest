@@ -60,6 +60,12 @@ public class ContiguousArray {
         return maxLength;
     }
 
+    /**
+     * Brute Force solution
+     *
+     * @param nums
+     * @return
+     */
     private static int findMaxLength1(int[] nums) {
         int maxLength = 0;
 
@@ -85,6 +91,12 @@ public class ContiguousArray {
         return maxLength;
     }
 
+    /**
+     * Improved Brute Force solution
+     *
+     * @param nums
+     * @return
+     */
     private static int findMaxLength2(int[] nums) {
         int maxLength = 0;
 
@@ -110,5 +122,11 @@ public class ContiguousArray {
         }
 
         return maxLength;
+    }
+
+    private static int findMaxLength3(int[] nums) {
+
+
+        return 0;
     }
 }
